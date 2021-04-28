@@ -17,6 +17,8 @@ $FWSvcFilters = Get-NetFirewallServiceFilter
 $FWIfTypeFilters = Get-NetFirewallInterfaceTypeFilter
 # Get authentication information for rules 
 $FWSecurityFilters = Get-NetFirewallSecurityFilter
+# Get address information for rules
+$FWAddressFilters = Get-NetFirewallAddressFilter
 # Get Configured FW rules which are enabled and allow traffic
 $FWRulesEnabled = Get-NetFirewallRule | Where-Object { ($_.Enabled -eq "True") -and ($_.Action -eq "Allow")}
 $fwrulearray = @()
@@ -32,6 +34,7 @@ foreach($enabledrule in $FWRulesEnabled){
     $fwsvcitem = $FWSvcFilters | Where-Object { $_.InstanceID -Like $fwname }
     $fwiftypeitem = $FWIfTypeFilters | Where-Object { $_.InstanceID -Like $fwname }
     $fwsecurityitem = $FWSecurityFilters | Where-Object { $_.InstanceID -Like $fwname }
+    $fwaddressitem = $FWAddressFilters | Where-Object { $_.InstanceID -Like $fwname }
     if($fwappitem.Program -contains "%windir%") { $friendlyprogramname = $fwappitem.Program -replace ("%windir%","C:\Windows")}
     elseif($fwappitem.Program -contains "%SystemRoot%"){ $friendlyprogramname = $fwappitem.Program -replace ("%SystemRoot%","C:\Windows")}
     else{ $friendlyprogramname = $fwappitem.Program }
@@ -45,6 +48,8 @@ foreach($enabledrule in $FWRulesEnabled){
         owner = $owner
         protocol = $fwportitem.Protocol
         localport = $fwportitem.LocalPort
+        localaddress = $fwaddressitem.LocalAddress
+        remoteaddress = $fwaddressitem.RemoteAddress
         IcmpType = $fwportitem.IcmpType
         remoteport = $fwportitem.RemotePort
         program = $fwappitem.Program
