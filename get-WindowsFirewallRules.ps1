@@ -20,7 +20,7 @@ $FWSecurityFilters = Get-NetFirewallSecurityFilter
 # Get address information for rules
 $FWAddressFilters = Get-NetFirewallAddressFilter
 # Get Configured FW rules which are enabled and allow traffic
-$FWRulesEnabled = Get-NetFirewallRule | Where-Object { ($_.Enabled -eq "True") -and ($_.Action -eq "Allow")}
+$FWRulesEnabled = Get-NetFirewallRule -PolicyStore ActiveStore | Where-Object { ($_.Enabled -eq "True") -and ($_.Action -eq "Allow")}
 $fwrulearray = @()
 foreach($enabledrule in $FWRulesEnabled){
     $fwname = $enabledrule.Name
@@ -61,6 +61,8 @@ foreach($enabledrule in $FWRulesEnabled){
         localprincipals = $fwsecurityitem.LocalUser
         remotemachines = $fwsecurityitem.RemoteMachine
         remoteusers = $fwsecurityitem.RemoteUser
+        PolicyStoreSource = $enabledrule.PolicyStoreSource
+        PolicyStoreSourceType = $enabledrule.PolicyStoreSourceType
     }
     $fwrulearray += New-Object psobject -Property $data
 }
