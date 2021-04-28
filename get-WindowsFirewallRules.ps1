@@ -8,17 +8,17 @@ Source: https://docs.microsoft.com/en-us/windows/security/threat-protection/wind
 #>
 
 $csvpath = "$env:Temp\FWRuleExport.csv" # define path to exported CSV file
-$FWPortFilters = Get-NetFirewallPortFilter 
+$FWPortFilters = Get-NetFirewallPortFilter -PolicyStore ActiveStore
 # Get program information of rules
-$FWAppFilters = Get-NetFirewallApplicationFilter
+$FWAppFilters = Get-NetFirewallApplicationFilter -PolicyStore ActiveStore
 # Get service information of rules
-$FWSvcFilters = Get-NetFirewallServiceFilter
+$FWSvcFilters = Get-NetFirewallServiceFilter -PolicyStore ActiveStore
 # Get interface information for rules
-$FWIfTypeFilters = Get-NetFirewallInterfaceTypeFilter
+$FWIfTypeFilters = Get-NetFirewallInterfaceTypeFilter -PolicyStore ActiveStore
 # Get authentication information for rules 
-$FWSecurityFilters = Get-NetFirewallSecurityFilter
+$FWSecurityFilters = Get-NetFirewallSecurityFilter -PolicyStore ActiveStore
 # Get address information for rules
-$FWAddressFilters = Get-NetFirewallAddressFilter
+$FWAddressFilters = Get-NetFirewallAddressFilter -PolicyStore ActiveStore
 # Get Configured FW rules which are enabled and allow traffic
 $FWRulesEnabled = Get-NetFirewallRule -PolicyStore ActiveStore | Where-Object { ($_.Enabled -eq "True") -and ($_.Action -eq "Allow")}
 $fwrulearray = @()
@@ -61,8 +61,8 @@ foreach($enabledrule in $FWRulesEnabled){
         localprincipals = $fwsecurityitem.LocalUser
         remotemachines = $fwsecurityitem.RemoteMachine
         remoteusers = $fwsecurityitem.RemoteUser
-        PolicyStoreSource = $enabledrule.PolicyStoreSource
-        PolicyStoreSourceType = $enabledrule.PolicyStoreSourceType
+        PolicyStoreSource = $PolicyStoreSource
+        PolicyStoreSourceType = $PolicyStoreSourceType
     }
     $fwrulearray += New-Object psobject -Property $data
 }
