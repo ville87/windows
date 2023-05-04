@@ -28,3 +28,23 @@ Use the script with: `python scriptname.py <plaintext pw>`
 # WinGet
 ## Install Firefox
 `winget install mozilla.firefox`   
+
+# Proxy with PowerShell
+```powershell
+# Check proxy
+[System.Net.WebProxy]::GetDefaultProxy()
+Get-ItemProperty -Path "Registry::HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+netsh winhttp show proxy
+
+# Set proxy credentials
+[System.Net.Http.HttpClient]::DefaultProxy.Credentials = [System.Net.CredentialCache]::DefaultCredentials
+
+# Set NULL proxy (bypass proxy)
+[System.Net.Http.HttpClient]::DefaultProxy = New-Object System.Net.WebProxy($null)
+[System.Net.HttpWebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy($null)
+# Specific proxy
+[System.Net.Http.HttpClient]::DefaultProxy = New-Object System.Net.WebProxy('http://proxy', $true)
+
+# Test if proxy is used or bypassed for specific URL 
+([System.Net.WebRequest]::GetSystemWebproxy()).IsBypassed("https://google.com")
+```
