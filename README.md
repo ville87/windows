@@ -48,3 +48,9 @@ netsh winhttp show proxy
 # Test if proxy is used or bypassed for specific URL 
 ([System.Net.WebRequest]::GetSystemWebproxy()).IsBypassed("https://google.com")
 ```
+
+# Test AV
+To quickly verify if AV is running and catching malicious files, the EICAR test file can be downloaded using powershell:
+```powershell
+Invoke-WebRequest -Uri https://secure.eicar.org/eicar.com.txt -OutFile C:\temp\eicar.com.txt
+```
