@@ -1,3 +1,20 @@
+#####################################
+# Windows Event Log parsing samples #
+#####################################
+
+# Get all log entries from all enabled windows logs from a specific timeframe
+$starttime = (Get-Date).AddHours(-16)
+$endtime = (Get-Date).AddHours(-15)
+$events = @()
+$logstosearch = Get-WinEvent -ListLog * | Where-Object { ($_.isEnabled -eq $true) -and ($_.RecordCount -gt 0)  }
+foreach($log in $logstosearch){
+    $evententriess = Get-WinEvent -FilterHashtable @{
+        'LogName' = $log.LogName
+        'StartTime' = $starttime
+        'EndTime' = $endtime
+    } 
+    $events += $evententriess
+}
 
 # Parsing data from message field
 # To parse data from the message field, you have to work with the cmdlet "Get-EventLog" (instead of "Get-WinEvent") and work with ReplacementStrings:
