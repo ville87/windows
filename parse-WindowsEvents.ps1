@@ -15,6 +15,8 @@ foreach($log in $logstosearch){
     } 
     $events += $evententriess
 }
+# select specific properties of all events and add them to a new PSObject
+$objects=@();$events | % { $data = [PSCustomObject]@{TimeCreated = $($_.TimeCreated);LogName= $($_.LogName);Message= $($_.Message);Providername= $($_.ProviderName);Properties = $($_.Properties.Value)};$objects += $data}
 
 # Parsing data from message field
 # To parse data from the message field, you have to work with the cmdlet "Get-EventLog" (instead of "Get-WinEvent") and work with ReplacementStrings:
