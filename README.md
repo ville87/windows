@@ -54,3 +54,13 @@ To quickly verify if AV is running and catching malicious files, the EICAR test 
 ```powershell
 Invoke-WebRequest -Uri https://secure.eicar.org/eicar.com.txt -OutFile C:\temp\eicar.com.txt
 ```
+
+# DFIR Stuff
+```
+# amcache:
+C:\Windows\AppCompat\Programs\Amcache.hve
+# shimcache:
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache
+# prefetch: 
+C:\Windows\Prefetch
+```
