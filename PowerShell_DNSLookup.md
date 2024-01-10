@@ -4,6 +4,7 @@
 # Perform a DNS Lookups Using PowerShell (.Net):
 [System.Net.Dns]::GetHostEntry("10.10.10.100").HostName
 [System.Net.Dns]::GetHostAddresses("ComputerName").IPAddressToString
+[System.Net.Dns]::Resolve('domain.com')
 # another method
 Resolve-DNSName 10.10.10.10
 ```
