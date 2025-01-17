@@ -42,6 +42,34 @@ ffast winlab WS1 2/19/2021 5:41:49 AM
 # Search for passwords from powershell scripts:
 Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" | Where-Object { $_.Message -like "*passw*"} | Format-Table TimeCreated, ID, ProviderName, Message -AutoSize -Wrap
 
+# Find Schannel logins with certificates, list SubjectCN and SubjectAltName to see if there are discrepancies which could identify possible ESC1 abuse:
+Get-WinEvent -LogName 'Microsoft-Windows-CAPI2/Operational' -FilterXPath '*[System[EventID=90]]' -max 10 | % { 
+    $xmlevent = ([xml]$_.toXml()).Event
+    $certs = $xmlevent.UserData.x509Objects.certificate
+    $systemdata = $xmlevent.system
+    if($certs -notlike $null){
+        foreach($cert in $certs){
+            $data = [PSCustomObject]@{
+                Computer = $($systemdata.Computer)
+                TimeCreated = $(Get-date $systemdata.TimeCreated.SystemTime -Format 'yyyy-MM-dd HH:mm')
+                Issuer = $($cert.Issuer.CN)
+                SubjectCN = $($cert.Subject.CN)
+                SubjectAltName = $($cert.Extensions.SubjectAltName.UPN)
+            }
+            $data
+        }
+    }
+}
+
+<# Example output:
+Computer       : dc1.lab.local
+TimeCreated    : 2025-01-17 11:51
+Issuer         : lab-SERVER1-CA
+SubjectCN      : Jdoe
+SubjectAltName : rplant@lab.local
+
+#>
+
 # Find successful user logins:
 Get-WinEvent -LogName 'security' -FilterXPath '*[System[EventID=4624]]' -max 10 | select @{Label='Time';Expression={$_.TimeCreated}},`
 @{Label='Account Name';Expression={$_.properties[1].value}},`
